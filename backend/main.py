@@ -1,14 +1,10 @@
-from dotenv import load_dotenv, dotenv_values
+from dotenv import load_dotenv
 from pathlib import Path
 import os
 
 # Force load .env from project root
 env_path = Path(__file__).resolve().parents[1] / ".env"
 load_dotenv(dotenv_path=env_path)
-
-# Debugging: print loaded environment variables
-env_values = dotenv_values(env_path)
-print("Loaded .env values:", env_values)
 
 from fastapi import FastAPI
 from .routes import auth
