@@ -23,4 +23,7 @@ http://127.0.0.1:8000/users/me
 3. Database Inspection (SQLite)
 
 List all users stored in the database:
+
+```bash
 python -m backend.scripts.list_users
+```
