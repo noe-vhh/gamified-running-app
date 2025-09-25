@@ -1,19 +1,22 @@
-from sqlmodel import SQLModel, Field
-from typing import Optional
+from sqlmodel import SQLModel, Field, Relationship
+from typing import Optional, List
 from datetime import datetime
 
 class Challenge(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-
     name: str
-    description: Optional[str] = None
-    tier: str  # Sprint, Marathon, Ultra, Trailblazer
-    type: str  # Solo, Public, Club
-    sport: str = "running"  # default to running for MVP
-    start_date: datetime
-    end_date: datetime
-    distance_target_km: Optional[float] = None  # e.g., 5, 7, 10 km per day/week
-    active: bool = True
-
+    tier: str
     created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: Optional[datetime] = None
+
+    # Relationships
+    user_challenges: List["UserChallenge"] = Relationship(
+        back_populates="challenge",
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
+
+# Forward references
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from .user_challenge import UserChallenge
+
+Challenge.update_forward_refs()

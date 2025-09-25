@@ -26,3 +26,10 @@ Development Reference
 ## 3. Database Inspection (SQLite)
 
     python -m backend.scripts.list_users
+    python -m backend.scripts.list_user_challenges 1 (1 can be replaced with any user ID)
+
+---
+
+## 4. Test Scripts
+
+    python -m backend.scripts.test_activity_sync

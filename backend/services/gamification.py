@@ -9,19 +9,24 @@ TIER_MULTIPLIERS = {
 }
 STREAK_BONUS = 5
 
-def update_challenge_progress(user_challenge: UserChallenge, distance_completed_km: float, tier: str):
-    # update distance
-    user_challenge.distance_completed_km += distance_completed_km
+# backend/services/gamification.py
 
-    # simple streak: +1
+def update_challenge_progress(user_challenge, distance_km, tier):
+    """
+    Update a UserChallenge with a new activity.
+    Returns XP gained from this activity.
+    """
+    # Example XP calculation by tier
+    tier_xp_multiplier = {"Sprint": 15, "Marathon": 20, "Ultra": 25}
+    xp = distance_km * tier_xp_multiplier.get(tier, 10)
+
+    # Update challenge progress
+    user_challenge.distance_completed_km += distance_km
     user_challenge.streak += 1
 
-    # XP earned
-    xp = distance_completed_km * TIER_MULTIPLIERS.get(tier, 10) + user_challenge.streak * STREAK_BONUS
-    user_challenge.xp_earned += xp
-
-    # optionally mark completed if target reached
-    if hasattr(user_challenge, "challenge") and user_challenge.distance_completed_km >= user_challenge.challenge.distance_target_km:
+    # Determine completion threshold per tier
+    challenge_goals = {"Sprint": 50, "Marathon": 70, "Ultra": 100}  # km
+    if user_challenge.distance_completed_km >= challenge_goals.get(tier, 50):
         user_challenge.completed = True
 
     return xp

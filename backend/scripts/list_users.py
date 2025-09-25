@@ -1,8 +1,15 @@
 from backend.db import engine
-from backend.models.user import User
 from sqlmodel import Session, select
+from backend.models import User, UserChallenge, Challenge
 
-with Session(engine) as session:
-    users = session.exec(select(User)).all()
-    for u in users:
-        print(u)
+def list_users():
+    with Session(engine) as session:
+        users = session.exec(select(User)).all()
+        for user in users:
+            print(f"User: {user.username}, XP: {user.xp}, Momentum: {user.momentum}")
+            # Optionally list challenges
+            for uc in getattr(user, "user_challenges", []):
+                print(f"  Challenge ID: {uc.challenge_id}, Distance Completed: {uc.distance_completed_km} km")
+
+if __name__ == "__main__":
+    list_users()
