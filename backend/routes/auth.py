@@ -18,12 +18,12 @@ STRAVA_REDIRECT_URI = os.getenv("STRAVA_REDIRECT_URI")
 @router.get("/strava/login")
 def strava_login():
     url = (
-        f"https://www.strava.com/oauth/authorize"
-        f"?client_id={STRAVA_CLIENT_ID}"
-        f"&response_type=code"
-        f"&redirect_uri={STRAVA_REDIRECT_URI}"
-        f"&scope=read,activity:read_all"
-    )
+    f"https://www.strava.com/oauth/authorize"
+    f"?client_id={STRAVA_CLIENT_ID}"
+    f"&response_type=code"
+    f"&redirect_uri={STRAVA_REDIRECT_URI}"
+    f"&scope=read,activity:read_all"
+)
     return RedirectResponse(url)
 
 @router.get("/strava/callback")

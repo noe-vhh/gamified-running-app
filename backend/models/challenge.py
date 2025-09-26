@@ -6,6 +6,12 @@ class Challenge(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str
     tier: str
+    type: str
+    sport: str
+    distance_target_km: float
+    start_date: datetime
+    end_date: datetime
+    active: bool = True
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
     # Relationships
