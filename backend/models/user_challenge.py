@@ -23,7 +23,6 @@ class UserChallenge(SQLModel, table=True):
         sa_relationship_kwargs={"lazy": "selectin"}
     )
 
-# Forward references
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from .user import User

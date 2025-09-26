@@ -33,9 +33,8 @@ class User(SQLModel, table=True):
     last_sync_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     user_challenges: List["UserChallenge"] = Relationship(
-    back_populates="user",
-    sa_relationship_kwargs={"lazy": "selectin"}
-)
+        back_populates="user",
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
 
-# Update forward refs so SQLModel knows about string references
 User.update_forward_refs()
