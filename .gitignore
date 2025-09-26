@@ -4,4 +4,4 @@ __pycache__/
 *.db
 .env
 .DS_Store
-DEV_COMMANDS.md
+DEV_REFERENCE.md
