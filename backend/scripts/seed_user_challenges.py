@@ -1,30 +1,50 @@
 from datetime import datetime, timedelta
+import argparse
 from sqlmodel import Session, select
 from backend.db import engine
 from backend.models.user import User
 from backend.models.challenge import Challenge
 from backend.models.user_challenge import UserChallenge
 
-def seed_user_challenges(user_id: int):
+DEFAULT_TIERS = ["Sprint", "Marathon", "Ultra"]
+DEFAULT_CHALLENGE_CONFIG = {
+    "Sprint": {"distance_target_km": 5, "duration_days": 7},
+    "Marathon": {"distance_target_km": 10, "duration_days": 7},
+    "Ultra": {"distance_target_km": 15, "duration_days": 7}
+}
+
+
+def seed_user_challenges(user_id: int, mode: str = "new"):
     with Session(engine) as session:
         user = session.get(User, user_id)
         if not user:
-            print("User not found")
+            print(f"❌ User with ID {user_id} not found")
             return
 
-        # Create some challenges if they don't exist
+        if mode == "refresh":
+            # Delete existing challenges for this user using session.exec()
+            stmt = select(UserChallenge).where(UserChallenge.user_id == user_id)
+            existing_user_challenges = session.exec(stmt).all()
+            deleted_count = len(existing_user_challenges)
+            for uc in existing_user_challenges:
+                session.delete(uc)
+            session.commit()
+            print(f"♻️  Deleted {deleted_count} existing challenges for user '{user.username}'")
+
+        # Create default challenges if they don't exist
         existing_challenges = session.exec(select(Challenge)).all()
         if not existing_challenges:
-            tiers = ["Sprint", "Marathon", "Ultra"]
-            for tier in tiers:
+            print("🆕 No challenges found. Creating default challenges...")
+            for tier in DEFAULT_TIERS:
+                config = DEFAULT_CHALLENGE_CONFIG[tier]
                 start_date = datetime.utcnow()
-                end_date = start_date + timedelta(days=7)  # default 1-week challenge
+                end_date = start_date + timedelta(days=config["duration_days"])
                 challenge = Challenge(
                     name=f"{tier} Challenge",
                     tier=tier,
-                    type="solo",  
+                    type="solo",
                     sport="running",
-                    distance_target_km=5 if tier=="Sprint" else 10 if tier=="Marathon" else 15,
+                    distance_target_km=config["distance_target_km"],
                     start_date=start_date,
                     end_date=end_date,
                     created_at=start_date,
@@ -32,11 +52,22 @@ def seed_user_challenges(user_id: int):
                 )
                 session.add(challenge)
             session.commit()
-
             existing_challenges = session.exec(select(Challenge)).all()
+            print(f"✅ Created {len(existing_challenges)} default challenges")
 
         # Assign challenges to user
+        assigned_count = 0
         for challenge in existing_challenges:
+            if mode == "new":
+                exists = session.exec(
+                    select(UserChallenge).where(
+                        UserChallenge.user_id == user_id,
+                        UserChallenge.challenge_id == challenge.id
+                    )
+                ).first()
+                if exists:
+                    continue
+
             uc = UserChallenge(
                 user_id=user.id,
                 challenge_id=challenge.id,
@@ -44,12 +75,25 @@ def seed_user_challenges(user_id: int):
                 streak=0,
                 xp_earned=0.0,
                 completed=False,
-                updated_at=datetime.utcnow()
+                updated_at=datetime.utcnow(),
+                joined_at=datetime.utcnow()
             )
             session.add(uc)
+            assigned_count += 1
+
         session.commit()
-        print(f"Seeded {len(existing_challenges)} challenges for user '{user.username}'")
+        print(f"✅ Assigned {assigned_count} challenges to user '{user.username}' (ID: {user.id})")
+
 
 if __name__ == "__main__":
-    test_user_id = 1  # replace with your user ID
-    seed_user_challenges(test_user_id)
+    parser = argparse.ArgumentParser(description="Seed challenges for a user.")
+    parser.add_argument("user_id", type=int, help="The ID of the user")
+    parser.add_argument(
+        "--mode",
+        choices=["new", "refresh"],
+        default="new",
+        help="Mode: 'new' = assign missing challenges, 'refresh' = delete and reseed"
+    )
+    args = parser.parse_args()
+
+    seed_user_challenges(args.user_id, mode=args.mode)

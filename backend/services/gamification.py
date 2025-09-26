@@ -9,8 +9,6 @@ TIER_MULTIPLIERS = {
 }
 STREAK_BONUS = 5
 
-# backend/services/gamification.py
-
 def update_challenge_progress(user_challenge, distance_km, tier):
     """
     Update a UserChallenge with a new activity.

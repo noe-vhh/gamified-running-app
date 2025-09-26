@@ -32,4 +32,8 @@ Development Reference
 
 ## 4. Test Scripts
 
+    (Number at end indicates user ID)
+    python -m backend.scripts.seed_user_challenges 1
+    python -m backend.scripts.seed_user_challenges 1 --mode refresh
+
     python -m backend.scripts.test_activity_sync

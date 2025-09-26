@@ -10,7 +10,8 @@ class UserChallenge(SQLModel, table=True):
     streak: int = Field(default=0)
     completed: bool = Field(default=False)
     xp_earned: float = Field(default=0)
-    updated_at: Optional[datetime] = None
+    joined_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
+    updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
     # Relationships
     user: "User" = Relationship(
