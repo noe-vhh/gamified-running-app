@@ -14,7 +14,6 @@ from ..models.user import User
 
 router = APIRouter()
 
-
 @router.post("/sync")
 def sync_activities(
     current_user: User = Depends(get_current_user),
@@ -25,26 +24,17 @@ def sync_activities(
     - Challenge progress
     - User XP and momentum
     - Badges and titles
-
-    Rules:
-    - New users (no last_sync_at) → fetch activities after registration
-    - Returning users → fetch activities since last sync
     """
-
     # Determine timestamp cutoff for fetching activities
-    after_timestamp = (
-        int(current_user.last_sync_at.timestamp())
-        if current_user.last_sync_at
-        else int(current_user.created_at.timestamp())
-    )
+    after_timestamp = int(current_user.last_sync_at.timestamp()) if current_user.last_sync_at else int(current_user.created_at.timestamp())
 
-    # Fetch Strava activities
+    # Fetch Strava activities (auto refresh token inside)
     activities = fetch_user_activities(current_user, after_timestamp=after_timestamp)
 
     total_xp_added = 0
     updated_challenges = []
 
-    # Get all active challenges for the user
+    # Fetch all UserChallenge records for the user
     user_challenges: List[UserChallenge] = session.exec(
         select(UserChallenge).where(UserChallenge.user_id == current_user.id)
     ).all()
@@ -55,20 +45,16 @@ def sync_activities(
             continue
 
         challenge_xp = 0
-
         for activity in activities:
-            # Only running activities count
             if activity.get("type") != "Run":
                 continue
 
             distance_km = activity.get("distance", 0) / 1000  # meters → km
             activity_date = activity.get("start_date", datetime.utcnow())
 
-            # Update challenge progress with streak logic
             xp = update_challenge_progress(uc, distance_km, challenge.tier, activity_date)
             challenge_xp += xp
 
-        # Record updated challenge info if XP was earned
         if challenge_xp > 0:
             updated_challenges.append({
                 "user_challenge_id": uc.id,
@@ -78,16 +64,15 @@ def sync_activities(
                 "streak": uc.streak
             })
 
-        # Always save updated challenge state
         session.add(uc)
         total_xp_added += challenge_xp
 
     # Update user stats
     current_user.xp += total_xp_added
-    current_user.momentum += total_xp_added // 10  # 10% of XP as momentum
+    current_user.momentum += total_xp_added // 10
     current_user.last_sync_at = datetime.utcnow()
 
-    # Award badges and titles
+    # Award badges & titles
     new_badges, new_titles = award_badges_and_titles(current_user, user_challenges)
 
     session.add(current_user)
