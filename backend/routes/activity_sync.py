@@ -5,7 +5,7 @@ from typing import List
 
 from ..utils.dependencies import get_current_user
 from ..services.strava_service import fetch_user_activities
-from ..services.gamification import update_challenge_progress
+from ..services.progress import update_challenge_progress
 from ..services.awards import award_badges_and_titles
 from ..db import get_session
 from ..models.user_challenge import UserChallenge

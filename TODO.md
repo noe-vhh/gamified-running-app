@@ -25,12 +25,12 @@
 - [x] JWT authentication system
 - [x] Strava token refresh handling
 - [x] FastAPI backend with auto API docs (available at /docs)
+- [x] Rename gamification system
 
 ---
 
 ## **Core Gameplay**
 
-- [ ] Rename gamification system
 - [ ] Migrate badges & titles etc. to DB storage (currently hardcoded)
 - [ ] Award general XP when not in a challenge
 - [ ] Dynamic XP awarding

@@ -6,7 +6,7 @@ from tabulate import tabulate  # pip install tabulate
 from backend.db import engine
 from backend.models.user import User
 from backend.models.user_challenge import UserChallenge
-from backend.services.gamification import update_challenge_progress
+from backend.services.progress import update_challenge_progress
 from backend.services.awards import award_badges_and_titles
 from backend.services.strava_service import fetch_user_activities
 
