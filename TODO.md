@@ -27,12 +27,12 @@
 - [x] FastAPI backend with auto API docs (available at /docs)
 - [x] Rename gamification system\
 - [x] Migrate badges & titles etc. to DB storage (currently hardcoded)
+- [x] Fix Distance Logic: Distance badges should track actual running distance, not XP
 
 ---
 
 ## **Core Gameplay**
 
-- [ ] Fix Distance Logic: Distance badges should track actual running distance, not XP\
 - [ ] Award Management: Allow users to set active titles
 - [ ] Award Display: Create endpoints to view user's badges and titles
 

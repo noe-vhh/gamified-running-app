@@ -65,7 +65,14 @@ def test_activity_sync(user_id: int, use_mock: bool = True, user_type: str = "ne
                 uc.updated_at = datetime.utcnow()
 
         total_xp_added = 0
+        total_distance_added = 0.0
         table_rows = []
+
+        # Calculate total distance from all running activities
+        for activity in activities:
+            if activity["type"] == "Run":
+                distance_km = activity["distance"] / 1000
+                total_distance_added += distance_km
 
         for uc in user_challenges:
             challenge = uc.challenge
@@ -91,21 +98,24 @@ def test_activity_sync(user_id: int, use_mock: bool = True, user_type: str = "ne
                 f"{uc.distance_completed_km:.1f} km",  # actual progress in DB
                 f"{challenge_xp:.1f}",
                 uc.streak,
-                "✅" if uc.completed else "❌"
+                "YES" if uc.completed else "NO"
             ])
 
         user.xp += total_xp_added
         user.momentum += total_xp_added // 10
+        user.total_distance_km += total_distance_added
         user.last_sync_at = datetime.utcnow()
 
-        new_badges, new_titles = award_badges_and_titles(user, user_challenges)
+        new_badges, new_titles = award_badges_and_titles(user, user_challenges, session)
         session.add(user)
         session.commit()
 
         # --- Console summary ---
         print(f"\n=== User '{user.username}' Sync Summary ({user_type.upper()} user) ===")
         print(f"Total activities processed: {len(activities)}")
+        print(f"Total distance added: {total_distance_added:.1f} km")
         print(f"Total XP added: {total_xp_added}")
+        print(f"User total distance: {user.total_distance_km:.1f} km")
         print(f"User total XP: {user.xp}")
         print(f"User momentum: {user.momentum}")
         print(f"New badges: {new_badges}")
@@ -115,7 +125,7 @@ def test_activity_sync(user_id: int, use_mock: bool = True, user_type: str = "ne
         print(tabulate(
             table_rows,
             headers=["Challenge", "Tier", "Distance Completed", "XP Earned", "Streak", "Completed"],
-            tablefmt="fancy_grid"
+            tablefmt="grid"
         ))
         print("\n")
 

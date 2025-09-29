@@ -35,7 +35,7 @@ def award_badges_and_titles(user: User, user_challenges: List[UserChallenge], se
     for badge in distance_badges:
         if badge.name not in user_badge_names:
             requirements = json.loads(badge.requirements)
-            if requirements["type"] == "distance" and user.xp >= requirements["xp_required"]:
+            if requirements["type"] == "distance" and user.total_distance_km >= requirements["distance_required"]:
                 # Award the badge
                 user_badge = UserBadge(user_id=user.id, badge_id=badge.id)
                 session.add(user_badge)

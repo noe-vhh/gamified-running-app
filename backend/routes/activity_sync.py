@@ -32,7 +32,14 @@ def sync_activities(
     activities = fetch_user_activities(current_user, after_timestamp=after_timestamp)
 
     total_xp_added = 0
+    total_distance_added = 0.0
     updated_challenges = []
+
+    # Calculate total distance from all running activities
+    for activity in activities:
+        if activity.get("type") == "Run":
+            distance_km = activity.get("distance", 0) / 1000  # meters → km
+            total_distance_added += distance_km
 
     # Fetch all UserChallenge records for the user
     user_challenges: List[UserChallenge] = session.exec(
@@ -70,6 +77,7 @@ def sync_activities(
     # Update user stats
     current_user.xp += total_xp_added
     current_user.momentum += total_xp_added // 10
+    current_user.total_distance_km += total_distance_added
     current_user.last_sync_at = datetime.utcnow()
 
     # Award badges & titles
