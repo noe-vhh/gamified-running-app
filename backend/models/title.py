@@ -18,7 +18,7 @@ class Title(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
     name: str = Field(index=True)
     description: str = Field(sa_column=Column(Text))
-    requirements: str = Field(sa_column=Column(Text))  # JSON string describing requirements
+    requirements: str = Field(sa_column=Column(Text))
     rarity: TitleRarity = Field(sa_column=Column(Enum(TitleRarity)))
     active: bool = Field(default=True)
     created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column("created_at", DateTime))

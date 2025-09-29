@@ -13,7 +13,6 @@ class UserChallenge(SQLModel, table=True):
     joined_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
     updated_at: datetime = Field(default_factory=datetime.utcnow, nullable=False)
 
-    # Relationships
     user: "User" = Relationship(
         back_populates="user_challenges",
         sa_relationship_kwargs={"lazy": "selectin"}

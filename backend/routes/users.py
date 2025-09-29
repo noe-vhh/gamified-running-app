@@ -53,7 +53,9 @@ def read_users_me(
         "profile": current_user.profile,
         "profile_medium": current_user.profile_medium,
         "xp": current_user.xp,
+        "level": current_user.level,
         "momentum": current_user.momentum,
+        "total_distance_km": current_user.total_distance_km,
         "badges": [
             {
                 "id": badge.id,

@@ -5,7 +5,7 @@ from typing import List
 
 from ..utils.dependencies import get_current_user
 from ..services.strava_service import fetch_user_activities
-from ..services.progress import update_challenge_progress
+from ..services.progress import update_challenge_progress, calculate_base_xp, check_level_up
 from ..services.awards import award_badges_and_titles
 from ..db import get_session
 from ..models.user_challenge import UserChallenge
@@ -34,12 +34,16 @@ def sync_activities(
     total_xp_added = 0
     total_distance_added = 0.0
     updated_challenges = []
+    base_xp_added = 0
 
-    # Calculate total distance from all running activities
+    # Calculate total distance and base XP from all running activities
     for activity in activities:
         if activity.get("type") == "Run":
             distance_km = activity.get("distance", 0) / 1000  # meters → km
             total_distance_added += distance_km
+            # Award base XP for all running activities
+            base_xp = calculate_base_xp(distance_km, in_challenge=False)
+            base_xp_added += base_xp
 
     # Fetch all UserChallenge records for the user
     user_challenges: List[UserChallenge] = session.exec(
@@ -75,10 +79,14 @@ def sync_activities(
         total_xp_added += challenge_xp
 
     # Update user stats
+    total_xp_added += base_xp_added 
     current_user.xp += total_xp_added
     current_user.momentum += total_xp_added // 10
     current_user.total_distance_km += total_distance_added
     current_user.last_sync_at = datetime.utcnow()
+
+    # Check for level up
+    leveled_up = check_level_up(current_user)
 
     # Award badges & titles
     new_badges, new_titles = award_badges_and_titles(current_user, user_challenges, session)
@@ -90,6 +98,10 @@ def sync_activities(
         "message": "Activities synced successfully",
         "activities_count": len(activities),
         "xp_added": total_xp_added,
+        "base_xp_added": base_xp_added,
+        "challenge_xp_added": total_xp_added - base_xp_added,
+        "leveled_up": leveled_up,
+        "current_level": current_user.level,
         "challenges_updated": updated_challenges,
         "new_badges": new_badges,
         "new_titles": new_titles

@@ -25,9 +25,11 @@
 - [x] JWT authentication system
 - [x] Strava token refresh handling
 - [x] FastAPI backend with auto API docs (available at /docs)
-- [x] Rename gamification system\
+- [x] Rename gamification system
 - [x] Migrate badges & titles etc. to DB storage (currently hardcoded)
 - [x] Fix Distance Logic: Distance badges should track actual running distance, not XP
+- [x] Add Level System: Implement XP-based user levels with level-up rewards
+- [x] Award general XP when not in a challenge
 
 ---
 
@@ -35,9 +37,6 @@
 
 - [ ] Award Management: Allow users to set active titles
 - [ ] Award Display: Create endpoints to view user's badges and titles
-
-- [ ] Add Level System: Implement XP-based user levels with level-up rewards
-- [ ] Award general XP when not in a challenge
 
 - [ ] Check momentum system
 - [ ] Reason for momentum system

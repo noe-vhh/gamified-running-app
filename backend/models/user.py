@@ -27,6 +27,7 @@ class User(SQLModel, table=True):
     refresh_token: Optional[str] = Field(default=None)
     token_expires_at: Optional[datetime] = Field(default=None, sa_column=Column("token_expires_at", DateTime))
     xp: int = Field(default=0)
+    level: int = Field(default=1)
     momentum: int = Field(default=0)
     total_distance_km: float = Field(default=0.0)
     created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column("created_at", DateTime))

@@ -19,7 +19,7 @@ class Badge(SQLModel, table=True):
     name: str = Field(index=True)
     description: str = Field(sa_column=Column(Text))
     category: BadgeCategory = Field(sa_column=Column(Enum(BadgeCategory)))
-    requirements: str = Field(sa_column=Column(Text))  # JSON string describing requirements
+    requirements: str = Field(sa_column=Column(Text))
     icon_url: Optional[str] = Field(default=None)
     rarity: str = Field(default="common")  # common, uncommon, rare, epic, legendary
     active: bool = Field(default=True)

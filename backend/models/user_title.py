@@ -12,7 +12,7 @@ class UserTitle(SQLModel, table=True):
     user_id: int = Field(foreign_key="user.id")
     title_id: int = Field(foreign_key="title.id")
     earned_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column("earned_at", DateTime))
-    is_active: bool = Field(default=False)  # Only one title can be active at a time
+    is_active: bool = Field(default=False)
     
     user: Optional["User"] = Relationship(back_populates="user_titles")
     title: Optional["Title"] = Relationship(back_populates="user_titles")
