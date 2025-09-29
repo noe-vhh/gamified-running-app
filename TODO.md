@@ -25,36 +25,22 @@
 - [x] JWT authentication system
 - [x] Strava token refresh handling
 - [x] FastAPI backend with auto API docs (available at /docs)
-- [x] Rename gamification system
+- [x] Rename gamification system\
+- [x] Migrate badges & titles etc. to DB storage (currently hardcoded)
 
 ---
 
 ## **Core Gameplay**
 
-- [ ] Migrate badges & titles etc. to DB storage (currently hardcoded)
+- [ ] Fix Distance Logic: Distance badges should track actual running distance, not XP\
+- [ ] Award Management: Allow users to set active titles
+- [ ] Award Display: Create endpoints to view user's badges and titles
+
+- [ ] Add Level System: Implement XP-based user levels with level-up rewards
 - [ ] Award general XP when not in a challenge
-- [ ] Dynamic XP awarding
-- [ ] Updated badges + title awarding, dynamic
-- [ ] Levelling system - XP, level titles & badges etc.
 
----
-
-## **Social**
-
-- [ ] Friends system
-- [ ] Friends discovery, search & requests
-- [ ] Clubs system
-- [ ] Club discovery & search
-- [ ] Community System (Possibly teams etc. for non club members not wanting Solo experience)
-
----
-
-## **Leaderboards**
-
-- [ ] Solo level leaderboard (XP-based)
-- [ ] Internal Club leaderboards (internal ranking of members by XP)
-- [ ] Club vs. Club system (fair rules: both clubs complete same challenge)
-- [ ] CLub Regional leaderboards (local, city, national, global)
+- [ ] Check momentum system
+- [ ] Reason for momentum system
 
 ---
 
@@ -76,6 +62,25 @@
 - [ ] Zustand for state management
 - [ ] React Query for API sync
 - [ ] Push notifications (streak reminders, friend activities, milestones)
+
+---
+
+## **Social**
+
+- [ ] Friends system
+- [ ] Friends discovery, search & requests
+- [ ] Clubs system
+- [ ] Club discovery & search
+- [ ] Community System (Possibly teams etc. for non club members not wanting Solo experience)
+
+---
+
+## **Leaderboards**
+
+- [ ] Solo level leaderboard (XP-based)
+- [ ] Internal Club leaderboards (internal ranking of members by XP)
+- [ ] Club vs. Club system (fair rules: both clubs complete same challenge)
+- [ ] CLub Regional leaderboards (local, city, national, global)
 
 ---
 

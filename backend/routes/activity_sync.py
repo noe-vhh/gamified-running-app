@@ -73,7 +73,7 @@ def sync_activities(
     current_user.last_sync_at = datetime.utcnow()
 
     # Award badges & titles
-    new_badges, new_titles = award_badges_and_titles(current_user, user_challenges)
+    new_badges, new_titles = award_badges_and_titles(current_user, user_challenges, session)
 
     session.add(current_user)
     session.commit()

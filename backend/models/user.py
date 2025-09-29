@@ -1,10 +1,12 @@
 from sqlmodel import SQLModel, Field, Relationship
 from typing import Optional, List, TYPE_CHECKING
 from datetime import datetime
-from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime, JSON
+from sqlalchemy import Column, Integer, String, Float, Boolean, DateTime
 
 if TYPE_CHECKING:
     from .user_challenge import UserChallenge
+    from .user_badge import UserBadge
+    from .user_title import UserTitle
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
@@ -26,13 +28,19 @@ class User(SQLModel, table=True):
     token_expires_at: Optional[datetime] = Field(default=None, sa_column=Column("token_expires_at", DateTime))
     xp: int = Field(default=0)
     momentum: int = Field(default=0)
-    badges: List[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
-    titles: List[str] = Field(default_factory=list, sa_column=Column(JSON, nullable=False))
     created_at: datetime = Field(default_factory=datetime.utcnow, sa_column=Column("created_at", DateTime))
     updated_at: Optional[datetime] = Field(default=None, sa_column=Column("updated_at", DateTime))
     last_sync_at: Optional[datetime] = Field(default_factory=datetime.utcnow)
 
     user_challenges: List["UserChallenge"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    user_badges: List["UserBadge"] = Relationship(
+        back_populates="user",
+        sa_relationship_kwargs={"lazy": "selectin"}
+    )
+    user_titles: List["UserTitle"] = Relationship(
         back_populates="user",
         sa_relationship_kwargs={"lazy": "selectin"}
     )
