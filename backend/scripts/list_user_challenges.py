@@ -19,7 +19,6 @@ def list_user_challenges(user_id: int):
 
         print(f"Challenges for user: {user.username} (ID: {user.id})")
         print(f"XP: {user.xp}, Momentum: {user.momentum}")
-        print(f"Badges: {user.badges}, Titles: {user.titles}")
         print("------")
 
         for uc in ucs:

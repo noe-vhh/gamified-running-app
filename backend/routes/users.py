@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from jose import jwt, JWTError
 from sqlmodel import Session, select
+from sqlalchemy.orm import selectinload
 import os
 
 from ..db import engine, get_session
@@ -12,6 +13,7 @@ from ..models.user_badge import UserBadge
 from ..models.user_title import UserTitle
 from ..utils.dependencies import get_current_user
 from ..utils.security import SECRET_KEY, ALGORITHM
+from ..utils.serialization import serialize_user_basic, serialize_badge, serialize_title
 
 router = APIRouter()
 security = HTTPBearer()
@@ -24,15 +26,18 @@ def read_users_me(
     """
     Return safe user fields for dashboard / frontend.
     """
-    # Get user's badges
-    user_badges = session.exec(
-        select(Badge).join(UserBadge).where(UserBadge.user_id == current_user.id)
-    ).all()
+    # Optimized query: Get user with all related data in one go
+    user_with_relations = session.exec(
+        select(User)
+        .options(
+            selectinload(User.user_badges).selectinload(UserBadge.badge),
+            selectinload(User.user_titles).selectinload(UserTitle.title)
+        )
+        .where(User.id == current_user.id)
+    ).first()
     
-    # Get user's titles
-    user_titles = session.exec(
-        select(Title).join(UserTitle).where(UserTitle.user_id == current_user.id)
-    ).all()
+    if not user_with_relations:
+        raise HTTPException(status_code=404, detail="User not found")
     
     # Get active title
     active_title = session.exec(
@@ -42,43 +47,23 @@ def read_users_me(
         )
     ).first()
     
-    return {
-        "id": current_user.id,
-        "strava_athlete_id": current_user.strava_athlete_id,
-        "username": current_user.username,
-        "first_name": current_user.first_name,
-        "last_name": current_user.last_name,
-        "profile": current_user.profile,
-        "profile_medium": current_user.profile_medium,
-        "xp": current_user.xp,
-        "level": current_user.level,
-        "momentum": current_user.momentum,
-        "total_distance_km": current_user.total_distance_km,
-        "badges": [
-            {
-                "id": badge.id,
-                "name": badge.name,
-                "description": badge.description,
-                "category": badge.category,
-                "rarity": badge.rarity,
-                "icon_url": badge.icon_url
-            }
-            for badge in user_badges
-        ],
-        "titles": [
-            {
-                "id": title.id,
-                "name": title.name,
-                "description": title.description,
-                "rarity": title.rarity,
-                "is_active": any(ut.title_id == title.id and ut.is_active for ut in current_user.user_titles)
-            }
-            for title in user_titles
-        ],
-        "active_title": {
-            "id": active_title.id,
-            "name": active_title.name,
-            "description": active_title.description,
-            "rarity": active_title.rarity
-        } if active_title else None
-    }
+    # Serialize user data
+    user_data = serialize_user_basic(user_with_relations)
+    
+    # Serialize badges
+    badges = [serialize_badge(ub.badge) for ub in user_with_relations.user_badges]
+    
+    # Serialize titles with active status
+    titles = []
+    for ut in user_with_relations.user_titles:
+        title_data = serialize_title(ut.title, ut.is_active)
+        titles.append(title_data)
+    
+    # Add badges, titles, and active title to response
+    user_data.update({
+        "badges": badges,
+        "titles": titles,
+        "active_title": serialize_title(active_title) if active_title else None
+    })
+    
+    return user_data

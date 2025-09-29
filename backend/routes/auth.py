@@ -8,6 +8,7 @@ from sqlmodel import select, Session
 from ..db import engine
 from ..models.user import User
 from ..utils.security import create_access_token
+from ..utils.serialization import serialize_user_basic
 
 router = APIRouter()
 
@@ -99,17 +100,7 @@ def strava_callback(code: str):
     # create a simple JWT for your frontend to use
     jwt_token = create_access_token({"user_id": user.id, "strava_athlete_id": user.strava_athlete_id})
 
-    # Return only safe user fields
-    user_payload = {
-        "id": user.id,
-        "strava_athlete_id": user.strava_athlete_id,
-        "username": user.username,
-        "first_name": user.first_name,
-        "last_name": user.last_name,
-        "profile": user.profile,
-        "profile_medium": user.profile_medium,
-        "xp": user.xp,
-        "momentum": user.momentum
-    }
+    # Return only safe user fields using serialization utility
+    user_payload = serialize_user_basic(user)
 
     return {"access_token": jwt_token, "token_type": "bearer", "user": user_payload}
