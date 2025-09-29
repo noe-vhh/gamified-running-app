@@ -11,12 +11,10 @@ from ..models.title import Title
 from ..models.user_badge import UserBadge
 from ..models.user_title import UserTitle
 from ..utils.dependencies import get_current_user
+from ..utils.security import SECRET_KEY, ALGORITHM
 
 router = APIRouter()
 security = HTTPBearer()
-
-SECRET_KEY = os.getenv("SECRET_KEY", "dev-secret-change-me")
-ALGORITHM = os.getenv("ALGORITHM", "HS256")
 
 @router.get("/me")
 def read_users_me(

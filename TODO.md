@@ -30,13 +30,29 @@
 - [x] Fix Distance Logic: Distance badges should track actual running distance, not XP
 - [x] Add Level System: Implement XP-based user levels with level-up rewards
 - [x] Award general XP when not in a challenge
+- [x] Hardcoded fallback secrets ("dev-secret-change-me")
 
 ---
 
 ## **Core Gameplay**
 
-- [ ] Award Management: Allow users to set active titles
-- [ ] Award Display: Create endpoints to view user's badges and titles
+- [ ] Missing environment variable validation
+
+- [ ] JWT secret key has weak fallback
+- [ ] No token refresh mechanism for users
+- [ ] Missing input validation on API endpoints
+
+- [ ] Badge/title management endpoints (set active title, view badges)
+- [ ] User profile update endpoints
+- [ ] hallenge progress tracking endpoints
+
+- [ ] Missing indexes on frequently queried fields
+- [ ] No soft delete functionality
+- [ ] Missing audit trails for important actions
+
+- [ ] No caching mechanism
+- [ ] Missing background job processing
+- [ ] Retry logic for Strava API calls
 
 - [ ] Check momentum system
 - [ ] Reason for momentum system
@@ -46,6 +62,7 @@
 ## **Tech / Backend**
 
 - [ ] Migrate to PostgreSQL for production scaling
+- [ ] Backup/restore strategy
 - [ ] Add comprehensive error handling & logging
 - [ ] Add rate limiting for API endpoints
 - [ ] Job queue for Strava sync (Celery / RQ)
