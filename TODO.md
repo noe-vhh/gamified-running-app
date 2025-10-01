@@ -109,6 +109,7 @@
 - [ ] User statistics and analytics endpoints
 - [ ] Challenge completion and progress tracking endpoints
 - [ ] User activity history endpoints
+- [ ] Fair Play System – handle unrealistic activities (e.g., 500 km rides uploaded manually).
 
 ---
 
@@ -138,6 +139,7 @@
 - [ ] Add API versioning strategy
 - [ ] Implement background task processing for heavy operations
 - [ ] Add circuit breaker pattern for external API calls
+- [ ] Monitoring + Alerts – Sentry / Prometheus for production error + performance tracking.
 
 ---
 
@@ -150,6 +152,10 @@
 - [ ] Zustand for state management
 - [ ] React Query for API sync
 - [ ] Push notifications (streak reminders, friend activities, milestones)
+- [ ] Onboarding Flow – clear explanation of value (competitions, challenges, streaks).
+- [ ] Notifications Strategy – streak reminders, new challenge invites, level-ups.
+- [ ] Leaderboard UX – make it fun, not just a static table (animations, progress bars).
+- [ ] Accessibility Pass – make sure colors, fonts, navigation work for all users.
 
 ### **Core Gameplay Enhancements**
 
@@ -200,6 +206,9 @@
 - [ ] Clubs system
 - [ ] Club discovery & search
 - [ ] Community System (Possibly teams etc. for non club members not wanting Solo experience)
+- [ ] Referral System – reward players for inviting friends.
+- [ ] Club Branded Pages – let clubs customize their presence (banners, colors).
+- [ ] In-app Chat / Comments on challenges – light social features to build engagement.
 
 ### **Leaderboards**
 
@@ -226,3 +235,4 @@
 - [ ] Club trophies & banners for achievements
 - [ ] Seasonal resets for club leaderboards
 - [ ] Weighted scoring system so less-fit users can still contribute meaningfully
+- [ ] Seasonal Competitions – app-wide global events (Halloween run, New Year streak, etc.).
